@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>సుబ్బారెడ్డి గారి ఆర్థిక స్థితి | Net Worth Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --bg: #0b0d13;
+    --surface: #14171f;
+    --card: #1a1e2a;
+    --card2: #1f2433;
+    --border: #2a3045;
+    --accent: #6c8fff;
+    --accent2: #8a6cff;
+    --green: #2ecc71;
+    --green-dim: #1e8449;
+    --red: #ff5c5c;
+    --red-dim: #c0392b;
+    --yellow: #f4b73f;
+    --orange: #f39c12;
+    --text: #eef0fa;
+    --muted: #8892b0;
+    --muted2: #5f6788;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding-bottom: 24px;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #14171f 0%, #1a1e2a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .header h1 { font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: -0.2px; }
+  .header p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .last-updated { font-size: 10px; color: var(--muted2); text-align: right; }
+
+  /* NET WORTH HERO */
+  .networth-hero {
+    background: linear-gradient(160deg, #14171f 0%, #0b0d13 100%);
+    padding: 28px 20px 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .networth-label { font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
+  .networth-amount {
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 6px;
+  }
+  .networth-amount.positive { color: var(--green); }
+  .networth-amount.negative { color: var(--red); }
+  .networth-subtitle { font-size: 11px; color: var(--muted); margin-bottom: 14px; }
+
+  .toggle-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+  .toggle-pill {
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    background: var(--card);
+    transition: all 0.2s;
+  }
+  .toggle-pill.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  .summary-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .summary-box {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 14px;
+    border: 1px solid var(--border);
+  }
+  .summary-box .label { font-size: 10.5px; color: var(--muted); margin-bottom: 5px; }
+  .summary-box .value { font-size: 17px; font-weight: 800; }
+  .summary-box .value.green { color: var(--green); }
+  .summary-box .value.red { color: var(--red); }
+
+  .cashflow-strip {
+    margin: 0 20px 16px;
+    background: linear-gradient(135deg, rgba(255,92,92,0.12), rgba(255,92,92,0.04));
+    border: 1px solid rgba(255,92,92,0.3);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .cashflow-strip.positive {
+    background: linear-gradient(135deg, rgba(46,204,113,0.12), rgba(46,204,113,0.04));
+    border-color: rgba(46,204,113,0.3);
+  }
+  .cashflow-strip .cf-label { font-size: 11.5px; color: var(--muted); }
+  .cashflow-strip .cf-val { font-size: 15px; font-weight: 800; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    background: var(--surface);
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 0 0 auto;
+    padding: 12px 14px;
+    text-align: center;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-icon { font-size: 15px; display: block; margin-bottom: 2px; }
+
+  /* CONTENT */
+  .content { padding: 16px 20px; display: none; }
+  .content.active { display: block; }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-top: 22px;
+  }
+  .section-header:first-child { margin-top: 0; }
+  .section-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+  .section-total { font-size: 13px; font-weight: 700; }
+  .section-total.green { color: var(--green); }
+  .section-total.red { color: var(--red); }
+  .section-sub { font-size: 11px; color: var(--muted2); margin-top: -8px; margin-bottom: 10px; }
+
+  .entry-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 13px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .entry-info { flex: 1; min-width: 0; }
+  .entry-name { font-size: 13.5px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .entry-note { font-size: 11px; color: var(--muted); }
+  .entry-amount { font-size: 15px; font-weight: 700; text-align: right; white-space: nowrap; margin-left: 10px; }
+  .entry-actions { display: flex; gap: 6px; margin-left: 10px; flex-shrink: 0; }
+  .btn-icon {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 5px 7px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .badge {
+    font-size: 9.5px;
+    padding: 2px 7px;
+    border-radius: 8px;
+    font-weight: 700;
+    display: inline-block;
+    margin-top: 3px;
+  }
+  .badge.secure { background: rgba(46,204,113,0.15); color: var(--green); }
+  .badge.doubtful { background: rgba(255,92,92,0.15); color: var(--red); }
+  .badge.pending { background: rgba(244,183,63,0.15); color: var(--yellow); }
+
+  .add-btn {
+    width: 100%;
+    padding: 11px;
+    background: none;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 12.5px;
+    margin-bottom: 18px;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: 20px 20px 0 0;
+    padding: 24px 20px;
+    width: 100%;
+    max-width: 500px;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    position: relative;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+  .modal h3 { font-size: 15px; font-weight: 700; margin-bottom: 18px; }
+  .modal-close {
+    position: absolute;
+    right: 20px;
+    top: 22px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 18px;
+    cursor: pointer;
+  }
+  .field { margin-bottom: 14px; position: relative; }
+  .field label { display: block; font-size: 11.5px; color: var(--muted); margin-bottom: 6px; }
+  .field input, .field select {
+    width: 100%;
+    padding: 11px 13px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 13.5px;
+    font-family: inherit;
+    outline: none;
+  }
+  .field input:focus, .field select:focus { border-color: var(--accent); }
+  .field select option { background: var(--card); }
+  .rupee-prefix { position: absolute; left: 13px; bottom: 11px; color: var(--muted); font-size: 13.5px; pointer-events: none; }
+  .field input.with-prefix { padding-left: 26px; }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .btn-primary {
+    flex: 1;
+    padding: 12px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .btn-secondary {
+    padding: 12px 18px;
+    background: var(--card);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 13.5px;
+    cursor: pointer;
+  }
+
+  .expense-category {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 13px 14px;
+    margin-bottom: 8px;
+  }
+  .expense-cat-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .expense-cat-name { font-size: 13px; font-weight: 700; }
+  .expense-cat-total { font-size: 13px; font-weight: 700; color: var(--red); }
+  .expense-items { padding-left: 4px; }
+  .expense-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    font-size: 12.5px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .expense-item:last-child { border-bottom: none; }
+  .expense-item span:last-child { display: flex; align-items: center; gap: 6px; color: var(--text); font-weight: 600; }
+
+  .breakdown-list { margin-top: 10px; }
+  .breakdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .breakdown-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .breakdown-name { flex: 1; font-size: 12.5px; }
+  .breakdown-val { font-size: 12.5px; font-weight: 700; white-space: nowrap; }
+
+  .empty-state { text-align: center; padding: 28px 20px; color: var(--muted); }
+  .empty-state .emoji { font-size: 32px; margin-bottom: 10px; }
+  .empty-state p { font-size: 12.5px; }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--green);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    font-weight: 700;
+    z-index: 300;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  /* INSIGHTS TAB */
+  .insight-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .insight-card.priority-high { border-left: 3px solid var(--red); }
+  .insight-card.priority-med { border-left: 3px solid var(--yellow); }
+  .insight-card.priority-good { border-left: 3px solid var(--green); }
+  .insight-tag {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 3px 9px;
+    border-radius: 7px;
+    display: inline-block;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .insight-tag.high { background: rgba(255,92,92,0.15); color: var(--red); }
+  .insight-tag.med { background: rgba(244,183,63,0.15); color: var(--yellow); }
+  .insight-tag.good { background: rgba(46,204,113,0.15); color: var(--green); }
+  .insight-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .insight-body { font-size: 12.5px; color: var(--muted); line-height: 1.55; }
+  .insight-body b { color: var(--text); }
+  .insight-numbers {
+    display: flex;
+    gap: 14px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .insight-num { flex: 1; }
+  .insight-num .n-label { font-size: 10px; color: var(--muted2); }
+  .insight-num .n-val { font-size: 14px; font-weight: 800; }
+
+  .insights-summary {
+    background: linear-gradient(135deg, rgba(108,143,255,0.12), rgba(138,108,255,0.06));
+    border: 1px solid rgba(108,143,255,0.3);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .insights-summary h4 { font-size: 13px; margin-bottom: 8px; }
+  .insights-summary p { font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+
+  @media (min-width: 600px) {
+    .modal { border-radius: 20px; margin: 20px; }
+    .modal-overlay { align-items: center; }
+    body { max-width: 600px; margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>💰 సుబ్బారెడ్డి గారి ఆర్థిక స్థితి</h1>
+      <p>Personal + Surya DTH Business Overview</p>
+    </div>
+    <span class="last-updated" id="lastUpdated">—</span>
+  </div>
+</div>
+
+<div class="networth-hero">
+  <div class="networth-label">Total Net Worth</div>
+  <div class="networth-amount" id="totalNetWorth">₹0</div>
+  <div class="networth-subtitle" id="nwSubtitle">Total Assets − Total Debts</div>
+  <div class="toggle-row">
+    <div class="toggle-pill active" id="pillOptimistic" onclick="setMode('optimistic')">అన్ని కలిపి (Optimistic)</div>
+    <div class="toggle-pill" id="pillConservative" onclick="setMode('conservative')">Doubtful తీసేసి (Realistic)</div>
+  </div>
+</div>
+
+<div class="summary-row">
+  <div class="summary-box">
+    <div class="label">📈 Total Assets</div>
+    <div class="value green" id="totalAssets">₹0</div>
+  </div>
+  <div class="summary-box">
+    <div class="label">📉 Total Debts</div>
+    <div class="value red" id="totalDebts">₹0</div>
+  </div>
+</div>
+
+<div class="cashflow-strip" id="cashflowStrip">
+  <div>
+    <div class="cf-label">📊 Monthly Cash Flow</div>
+  </div>
+  <div class="cf-val" id="cashflowVal">₹0</div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('overview')"><span class="tab-icon">📊</span>Overview</div>
+  <div class="tab" onclick="switchTab('personal')"><span class="tab-icon">👤</span>Personal</div>
+  <div class="tab" onclick="switchTab('holdings')"><span class="tab-icon">📥</span>Holdings</div>
+  <div class="tab" onclick="switchTab('business')"><span class="tab-icon">🏢</span>Business</div>
+  <div class="tab" onclick="switchTab('payables')"><span class="tab-icon">⚠️</span>అప్పులు</div>
+  <div class="tab" onclick="switchTab('cashflow')"><span class="tab-icon">💸</span>Cash Flow</div>
+  <div class="tab" onclick="switchTab('insights')"><span class="tab-icon">💡</span>సలహాలు</div>
+</div>
+
+<!-- OVERVIEW -->
+<div id="tab-overview" class="content active">
+  <div class="section-header"><div class="section-title">ఆస్తులు vs అప్పులు Breakdown</div></div>
+  <div id="overviewBreakdown" class="breakdown-list"></div>
+</div>
+
+<!-- PERSONAL -->
+<div id="tab-personal" class="content">
+  <div class="section-header">
+    <div class="section-title">🏡 స్థిర ఆస్తులు (Property/Gold/Vehicle)</div>
+    <div class="section-total green" id="totalFixedAssets">₹0</div>
+  </div>
+  <div id="fixedAssetsList"></div>
+  <button class="add-btn" onclick="openModal('fixedasset')">+ ఆస్తి జోడించు</button>
+
+  <div class="section-header">
+    <div class="section-title">👰 భార్య ఆస్తులు</div>
+    <div class="section-total green" id="totalWifeAssets">₹0</div>
+  </div>
+  <div id="wifeAssetsList"></div>
+  <button class="add-btn" onclick="openModal('wifeasset')">+ భార్య ఆస్తి జోడించు</button>
+</div>
+
+<!-- HOLDINGS -->
+<div id="tab-holdings" class="content">
+  <div class="section-sub">ఇతరుల వద్ద ఉన్న amounts, advances, deposits</div>
+
+  <div class="section-header">
+    <div class="section-title">✅ Secure Holdings</div>
+    <div class="section-total green" id="totalSecureHoldings">₹0</div>
+  </div>
+  <div id="secureHoldingsList"></div>
+  <button class="add-btn" onclick="openModal('secureholding')">+ Secure Holding జోడించు</button>
+
+  <div class="section-header">
+    <div class="section-title">⏳ Pending (F&F Settlements)</div>
+    <div class="section-total green" id="totalPendingHoldings">₹0</div>
+  </div>
+  <div id="pendingHoldingsList"></div>
+  <button class="add-btn" onclick="openModal('pendingholding')">+ Pending జోడించు</button>
+
+  <div class="section-header">
+    <div class="section-title">⚠️ Doubtful Receivables (Blacklist)</div>
+    <div class="section-total red" id="totalDoubtful">₹0</div>
+  </div>
+  <div class="section-sub">వీళ్ళు తిరిగి ఇచ్చే పరిస్థితిలో లేరు — Realistic net worth లో ఇవి లెక్కించబడవు</div>
+  <div id="doubtfulList"></div>
+  <button class="add-btn" onclick="openModal('doubtful')">+ Doubtful Entry జోడించు</button>
+</div>
+
+<!-- BUSINESS -->
+<div id="tab-business" class="content">
+  <div class="section-header">
+    <div class="section-title">🏢 Business Holdings</div>
+    <div class="section-total green" id="totalBizHoldings">₹0</div>
+  </div>
+  <div id="bizHoldingsList"></div>
+  <button class="add-btn" onclick="openModal('bizholding')">+ Business Holding జోడించు</button>
+
+  <div class="section-header">
+    <div class="section-title">💵 Monthly Revenue Sources</div>
+    <div class="section-total green" id="totalRevenue">₹0/mo</div>
+  </div>
+  <div id="revenueList"></div>
+  <button class="add-btn" onclick="openModal('revenue')">+ Revenue Source జోడించు</button>
+
+  <div class="section-header">
+    <div class="section-title">🌱 Upcoming Income (Apply చేయాల్సినవి)</div>
+    <div class="section-total green" id="totalPotentialRevenue">₹0/mo</div>
+  </div>
+  <div class="section-sub">ఇవి apply చేస్తే వచ్చే అదనపు ఆదాయం — ఇంకా revenue లో కలపలేదు</div>
+  <div id="potentialRevenueList"></div>
+  <button class="add-btn" onclick="openModal('potentialrevenue')">+ Upcoming Income జోడించు</button>
+</div>
+
+<!-- PAYABLES -->
+<div id="tab-payables" class="content">
+  <div class="section-header">
+    <div class="section-title">❌ నేను ఇవ్వవలసినవి (Personal Loans)</div>
+    <div class="section-total red" id="totalPayables">₹0</div>
+  </div>
+  <div id="payablesList"></div>
+  <button class="add-btn" onclick="openModal('payable')">+ అప్పు జోడించు</button>
+</div>
+
+<!-- CASH FLOW -->
+<div id="tab-cashflow" class="content">
+  <div class="section-header">
+    <div class="section-title">💸 Monthly Expenses</div>
+    <div class="section-total red" id="totalMonthlyExpenses">₹0/mo</div>
+  </div>
+  <div id="expensesList"></div>
+  <button class="add-btn" onclick="openModal('expense')">+ Expense జోడించు</button>
+</div>
+
+<!-- INSIGHTS -->
+<div id="tab-insights" class="content">
+  <div id="insightsContainer"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOnOverlay(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3 id="modalTitle">Add Entry</h3>
+    <div class="field">
+      <label>పేరు / వివరణ *</label>
+      <input type="text" id="entryName" placeholder="ఉదా: రాజు గారికి ఇచ్చాను" />
+    </div>
+    <div class="field">
+      <label>మొత్తం (₹) *</label>
+      <span class="rupee-prefix">₹</span>
+      <input type="number" id="entryAmount" class="with-prefix" placeholder="0" inputmode="numeric" />
+    </div>
+    <div class="field" id="noteField">
+      <label>గమనికలు (Optional)</label>
+      <input type="text" id="entryNote" placeholder="ఉదా: తేదీ, వడ్డీ, ఇతర వివరాలు" />
+    </div>
+    <div class="field" id="categoryField" style="display:none">
+      <label>Category</label>
+      <select id="expenseCategory">
+        <option value="కడప ఇంటి ఖర్చులు">🏠 కడప ఇంటి ఖర్చులు</option>
+        <option value="అమ్మగారి ఖర్చులు">👵 అమ్మగారి ఖర్చులు</option>
+        <option value="Surya DTH Business">🏢 Surya DTH Business</option>
+        <option value="అప్పులు/వడ్డీ">💰 అప్పులు / వడ్డీ</option>
+        <option value="ఇతర">📦 ఇతర</option>
+      </select>
+    </div>
+    <div class="field" id="freqField" style="display:none">
+      <label>Frequency</label>
+      <select id="entryFreq">
+        <option value="monthly">నెలవారీ (Monthly)</option>
+        <option value="yearly">సంవత్సరానికి (Yearly)</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">రద్దు</button>
+      <button class="btn-primary" onclick="saveEntry()">సేవ్ చేయి</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✅ Saved!</div>
+
+<script>
+let mode = 'optimistic'; // optimistic vs conservative
+
+let data = {
+  fixedAssets: [
+    {id:1, name:"పొలం (2 ఎకరాలు)", amount:2000000, note:""},
+    {id:2, name:"వెల్లటూరు స్థలం (3 సెంట్లు)", amount:2400000, note:""},
+    {id:3, name:"బంగారు గొలుసులు (3 తులాలు)", amount:390000, note:"అమ్మ కోసం చేపించినవి · @₹1,30,000/తులం"},
+    {id:4, name:"బంగారు గాజులు (3 తులాలు)", amount:390000, note:"అమ్మ కోసం చేపించినవి"},
+    {id:5, name:"బ్రాస్‌లెట్ (2 తులాలు)", amount:260000, note:""},
+    {id:6, name:"ఉంగరాలు - 4 (1 తులం)", amount:130000, note:""},
+    {id:7, name:"చైన్ (అక్క పెళ్లిలో ఇచ్చింది, 1 తులం)", amount:130000, note:""},
+    {id:8, name:"House", amount:1500000, note:""},
+    {id:9, name:"కారు", amount:200000, note:""},
+    {id:10, name:"లాప్టాప్", amount:40000, note:""},
+    {id:11, name:"M&M Shares (Trading)", amount:20000, note:""},
+    {id:12, name:"చాగలేరు పొలం (1 ఎకరా)", amount:300000, note:"అమ్మకు గిఫ్ట్‌గా ఇచ్చింది"},
+    {id:13, name:"వెండి గ్లాసు + ప్లేట్", amount:100000, note:""}
+  ],
+  wifeAssets: [
+    {id:1, name:"చాగలేరు పొలం (3.5 ఎకరాలు)", amount:3000000, note:""},
+    {id:2, name:"బంగారం (16 తులాలు)", amount:2080000, note:"పెళ్లి సమయంలో తండ్రి ఇచ్చింది · @₹1,30,000/తులం"}
+  ],
+  secureHoldings: [
+    {id:1, name:"LIC Bond (4 installments కట్టినది)", amount:100000, note:""},
+    {id:2, name:"DishTV LCO Security Deposit", amount:50000, note:""},
+    {id:3, name:"పవన్ - Sun Direct లో balance", amount:150000, note:""},
+    {id:4, name:"వెల్లటూరు Surya DTH Shop Advance", amount:20000, note:""},
+    {id:5, name:"కడప House Advance", amount:20000, note:""}
+  ],
+  pendingHoldings: [
+    {id:1, name:"Sun Direct Distribution F&F", amount:50000, note:"Resign చేశాను - రావాల్సింది"},
+    {id:2, name:"DishTV Distribution F&F", amount:10000, note:""},
+    {id:3, name:"Tataplay Distribution F&F", amount:100000, note:""},
+    {id:4, name:"అంగడి మనీ", amount:7000, note:""}
+  ],
+  doubtful: [
+    {id:1, name:"శివలక్ష్మి అత్త (చాగలేరు)", amount:100000, note:"Blacklist"},
+    {id:2, name:"ఆదినారాయణ", amount:100000, note:"Blacklist"},
+    {id:3, name:"నాగ మల్లారెడ్డి (రాజి మామ)", amount:100000, note:"Blacklist"},
+    {id:4, name:"మోహన్ డిష్", amount:65000, note:"Blacklist"},
+    {id:5, name:"చిన్నపరెడ్డి", amount:30000, note:"Blacklist"},
+    {id:6, name:"చెన్నారెడ్డి మామ", amount:51000, note:"Blacklist"},
+    {id:7, name:"Surya DTH కస్టమర్లకు ఇచ్చిన అప్పు", amount:20000, note:"Blacklist"}
+  ],
+  bizHoldings: [],
+  potentialRevenue: [
+    {id:1, name:"అమ్మకు Pension (Apply చేయాలి)", amount:4000, note:"నెలవారీ · త్వరగా apply చేయాలి", freq:"monthly"},
+    {id:2, name:"రైతు భరోసా - భార్య పేరు మీద భూమికి", amount:13500, note:"సంవత్సరానికి · Apply చేయాలి", freq:"yearly"}
+  ],
+  revenue: [
+    {id:1, name:"Surya DTH (DishTV LCO)", amount:30000, note:""},
+    {id:2, name:"Sun Direct Distribution", amount:1000, note:""},
+    {id:3, name:"Trading (Average)", amount:1000, note:""}
+  ],
+  payables: [
+    {id:1, name:"మునిరెడ్డి మామకు", amount:55000, note:""},
+    {id:2, name:"గంగాధరకు", amount:50000, note:""},
+    {id:3, name:"వీరారెడ్డికి", amount:10000, note:""},
+    {id:4, name:"అక్కవాళ్ళకి", amount:65000, note:""},
+    {id:5, name:"Gold Loans (3 banks కలిపి)", amount:340000, note:""}
+  ],
+  expenses: [
+    {id:1, name:"House Rent", amount:10000, category:"కడప ఇంటి ఖర్చులు"},
+    {id:2, name:"పెట్రోల్", amount:5000, category:"కడప ఇంటి ఖర్చులు"},
+    {id:3, name:"కిరాణా", amount:3000, category:"కడప ఇంటి ఖర్చులు"},
+    {id:4, name:"Airtel నెట్", amount:850, category:"కడప ఇంటి ఖర్చులు"},
+    {id:5, name:"కరెంట్", amount:400, category:"కడప ఇంటి ఖర్చులు"},
+    {id:6, name:"మొబైల్ రీఛార్జ్‌లు", amount:700, category:"కడప ఇంటి ఖర్చులు"},
+    {id:7, name:"అదనపు ఖర్చులు", amount:1000, category:"కడప ఇంటి ఖర్చులు"},
+    {id:8, name:"గ్యాస్ సిలిండర్", amount:1100, category:"కడప ఇంటి ఖర్చులు"},
+    {id:9, name:"కిరాణా", amount:2000, category:"అమ్మగారి ఖర్చులు"},
+    {id:10, name:"కరెంట్", amount:300, category:"అమ్మగారి ఖర్చులు"},
+    {id:11, name:"Dish Recharge", amount:250, category:"అమ్మగారి ఖర్చులు"},
+    {id:12, name:"మొబైల్ రీఛార్జ్", amount:150, category:"అమ్మగారి ఖర్చులు"},
+    {id:13, name:"రూమ్ రెంట్", amount:4400, category:"Surya DTH Business"},
+    {id:14, name:"పనిమనిషి", amount:1000, category:"Surya DTH Business"},
+    {id:15, name:"కరెంట్", amount:600, category:"Surya DTH Business"},
+    {id:16, name:"నెట్ బిల్", amount:400, category:"Surya DTH Business"},
+    {id:17, name:"ఆడిటర్", amount:500, category:"Surya DTH Business"},
+    {id:18, name:"Mobiezy Service", amount:1000, category:"Surya DTH Business"},
+    {id:19, name:"బయట వ్యక్తికి నెలవారీ వడ్డీ", amount:4000, category:"అప్పులు/వడ్డీ"}
+  ]
+};
+
+let currentModal = null;
+let editingId = null;
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem('subbareddyNetworth');
+    if (saved) data = JSON.parse(saved);
+  } catch(e) {}
+}
+function saveData() {
+  localStorage.setItem('subbareddyNetworth', JSON.stringify(data));
+  document.getElementById('lastUpdated').textContent = 'Updated: ' + new Date().toLocaleString('te-IN');
+}
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('pillOptimistic').classList.toggle('active', m === 'optimistic');
+  document.getElementById('pillConservative').classList.toggle('active', m === 'conservative');
+  render();
+}
+
+function switchTab(name) {
+  const tabs = ['overview','personal','holdings','business','payables','cashflow','insights'];
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', tabs[i] === name));
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+const typeMap = {
+  fixedasset: 'fixedAssets', wifeasset: 'wifeAssets', secureholding: 'secureHoldings',
+  pendingholding: 'pendingHoldings', doubtful: 'doubtful', bizholding: 'bizHoldings',
+  revenue: 'revenue', payable: 'payables', expense: 'expenses', potentialrevenue: 'potentialRevenue'
+};
+
+function openModal(type, editId = null) {
+  currentModal = type;
+  editingId = editId;
+  const titles = {
+    fixedasset: '🏡 ఆస్తి జోడించు', wifeasset: '👰 భార్య ఆస్తి జోడించు',
+    secureholding: '✅ Secure Holding జోడించు', pendingholding: '⏳ Pending Holding జోడించు',
+    doubtful: '⚠️ Doubtful Entry జోడించు', bizholding: '🏢 Business Holding జోడించు',
+    revenue: '💵 Revenue Source జోడించు', payable: '❌ అప్పు జోడించు', expense: '💸 Expense జోడించు',
+    potentialrevenue: '🌱 Upcoming Income జోడించు'
+  };
+  document.getElementById('modalTitle').textContent = editId ? '✏️ Edit చేయి' : titles[type];
+  document.getElementById('entryName').value = '';
+  document.getElementById('entryAmount').value = '';
+  document.getElementById('entryNote').value = '';
+  document.getElementById('categoryField').style.display = type === 'expense' ? 'block' : 'none';
+  document.getElementById('freqField').style.display = type === 'potentialrevenue' ? 'block' : 'none';
+  document.getElementById('noteField').style.display = (type === 'expense') ? 'none' : 'block';
+
+  if (editId !== null) {
+    const arr = data[typeMap[type]];
+    const item = arr.find(i => i.id === editId);
+    if (item) {
+      document.getElementById('entryName').value = item.name;
+      document.getElementById('entryAmount').value = item.amount;
+      document.getElementById('entryNote').value = item.note || '';
+      if (type === 'expense') document.getElementById('expenseCategory').value = item.category || 'ఇతర';
+      if (type === 'potentialrevenue') document.getElementById('entryFreq').value = item.freq || 'monthly';
+    }
+  }
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  currentModal = null; editingId = null;
+}
+function closeModalOnOverlay(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+
+function saveEntry() {
+  const name = document.getElementById('entryName').value.trim();
+  const amount = parseFloat(document.getElementById('entryAmount').value) || 0;
+  if (!name || !amount) { alert('పేరు మరియు మొత్తం తప్పనిసరి!'); return; }
+  const arr = data[typeMap[currentModal]];
+  const entry = { id: editingId || Date.now(), name, amount, note: document.getElementById('entryNote').value.trim() };
+  if (currentModal === 'expense') {
+    entry.category = document.getElementById('expenseCategory').value;
+    delete entry.note;
+  }
+  if (currentModal === 'potentialrevenue') {
+    entry.freq = document.getElementById('entryFreq').value;
+  }
+  if (editingId !== null) {
+    const idx = arr.findIndex(i => i.id === editingId);
+    if (idx !== -1) arr[idx] = entry;
+  } else { arr.push(entry); }
+  saveData(); closeModal(); render();
+  showToast('✅ సేవ్ అయింది!');
+}
+
+function deleteEntry(type, id) {
+  if (!confirm('ఈ entry delete చేయాలా?')) return;
+  const arr = data[typeMap[type]];
+  const idx = arr.findIndex(i => i.id === id);
+  if (idx !== -1) arr.splice(idx, 1);
+  saveData(); render();
+  showToast('🗑️ Delete అయింది!');
+}
+
+function fmt(n) { return '₹' + Math.round(Math.abs(n)).toLocaleString('en-IN'); }
+function sum(arr) { return arr.reduce((s,i) => s + (i.amount||0), 0); }
+
+function renderList(containerId, arr, type, colorClass, badgeType) {
+  const el = document.getElementById(containerId);
+  if (!arr.length) { el.innerHTML = `<div class="empty-state"><div class="emoji">📭</div><p>ఇంకా entries లేవు</p></div>`; return; }
+  el.innerHTML = arr.map(item => `
+    <div class="entry-card">
+      <div class="entry-info">
+        <div class="entry-name">${item.name}</div>
+        ${item.note ? `<div class="entry-note">${item.note}</div>` : ''}
+        ${badgeType ? `<span class="badge ${badgeType}">${badgeType === 'secure' ? 'SECURE' : badgeType === 'doubtful' ? 'DOUBTFUL' : 'PENDING'}</span>` : ''}
+      </div>
+      <div class="entry-amount ${colorClass}">${fmt(item.amount)}</div>
+      <div class="entry-actions">
+        <button class="btn-icon" onclick="openModal('${type}', ${item.id})">✏️</button>
+        <button class="btn-icon" onclick="deleteEntry('${type}', ${item.id})">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function render() {
+  renderList('fixedAssetsList', data.fixedAssets, 'fixedasset', 'green');
+  renderList('wifeAssetsList', data.wifeAssets, 'wifeasset', 'green');
+  renderList('secureHoldingsList', data.secureHoldings, 'secureholding', 'green', 'secure');
+  renderList('pendingHoldingsList', data.pendingHoldings, 'pendingholding', 'green', 'pending');
+  renderList('doubtfulList', data.doubtful, 'doubtful', 'red', 'doubtful');
+  renderList('bizHoldingsList', data.bizHoldings, 'bizholding', 'green');
+  renderList('payablesList', data.payables, 'payable', 'red');
+
+  const tFixed = sum(data.fixedAssets);
+  const tWife = sum(data.wifeAssets);
+  const tSecure = sum(data.secureHoldings);
+  const tPending = sum(data.pendingHoldings);
+  const tDoubtful = sum(data.doubtful);
+  const tBizHold = sum(data.bizHoldings);
+  const tRevenue = sum(data.revenue);
+  const tPayables = sum(data.payables);
+  const tExpenses = sum(data.expenses);
+
+  document.getElementById('totalFixedAssets').textContent = fmt(tFixed);
+  document.getElementById('totalWifeAssets').textContent = fmt(tWife);
+  document.getElementById('totalSecureHoldings').textContent = fmt(tSecure);
+  document.getElementById('totalPendingHoldings').textContent = fmt(tPending);
+  document.getElementById('totalDoubtful').textContent = fmt(tDoubtful);
+  document.getElementById('totalBizHoldings').textContent = fmt(tBizHold);
+  document.getElementById('totalRevenue').textContent = fmt(tRevenue) + '/mo';
+  document.getElementById('totalPayables').textContent = fmt(tPayables);
+  document.getElementById('totalMonthlyExpenses').textContent = fmt(tExpenses) + '/mo';
+
+  // Net worth calculation - mode dependent
+  const baseAssets = tFixed + tWife + tSecure + tPending + tBizHold;
+  const totalAssets = mode === 'optimistic' ? baseAssets + tDoubtful : baseAssets;
+  const totalDebts = tPayables;
+  const netWorth = totalAssets - totalDebts;
+
+  document.getElementById('totalAssets').textContent = fmt(totalAssets);
+  document.getElementById('totalDebts').textContent = fmt(totalDebts);
+  const nwEl = document.getElementById('totalNetWorth');
+  nwEl.textContent = (netWorth < 0 ? '-' : '') + fmt(netWorth);
+  nwEl.className = 'networth-amount ' + (netWorth >= 0 ? 'positive' : 'negative');
+  document.getElementById('nwSubtitle').textContent = mode === 'optimistic'
+    ? 'Doubtful receivables కూడా కలుపుకుని'
+    : 'Doubtful receivables తీసేసి (realistic)';
+
+  // Cash flow
+  const cashflow = tRevenue - tExpenses;
+  const cfEl = document.getElementById('cashflowVal');
+  const cfStrip = document.getElementById('cashflowStrip');
+  cfEl.textContent = (cashflow < 0 ? '-' : '+') + fmt(cashflow) + '/mo';
+  cfEl.style.color = cashflow >= 0 ? 'var(--green)' : 'var(--red)';
+  cfStrip.classList.toggle('positive', cashflow >= 0);
+
+  renderExpenses(tExpenses);
+  renderRevenue();
+  renderPotentialRevenue();
+  renderOverview(tFixed, tWife, tSecure, tPending, tDoubtful, tBizHold, tPayables, tExpenses, tRevenue);
+  renderInsights({tFixed, tWife, tSecure, tPending, tDoubtful, tBizHold, tPayables, tExpenses, tRevenue, netWorth, cashflow});
+}
+
+function renderRevenue() {
+  const el = document.getElementById('revenueList');
+  if (!data.revenue.length) { el.innerHTML = `<div class="empty-state"><div class="emoji">💵</div><p>Revenue sources లేవు</p></div>`; return; }
+  el.innerHTML = data.revenue.map(item => `
+    <div class="entry-card">
+      <div class="entry-info"><div class="entry-name">${item.name}</div></div>
+      <div class="entry-amount green">${fmt(item.amount)}/mo</div>
+      <div class="entry-actions">
+        <button class="btn-icon" onclick="openModal('revenue', ${item.id})">✏️</button>
+        <button class="btn-icon" onclick="deleteEntry('revenue', ${item.id})">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderPotentialRevenue() {
+  const el = document.getElementById('potentialRevenueList');
+  const arr = data.potentialRevenue || [];
+  if (!arr.length) { el.innerHTML = `<div class="empty-state"><div class="emoji">🌱</div><p>Upcoming income items లేవు</p></div>`; return; }
+  el.innerHTML = arr.map(item => `
+    <div class="entry-card">
+      <div class="entry-info">
+        <div class="entry-name">${item.name}</div>
+        ${item.note ? `<div class="entry-note">${item.note}</div>` : ''}
+        <span class="badge pending">${item.freq === 'yearly' ? 'YEARLY' : 'MONTHLY'}</span>
+      </div>
+      <div class="entry-amount green">${fmt(item.amount)}${item.freq === 'yearly' ? '/yr' : '/mo'}</div>
+      <div class="entry-actions">
+        <button class="btn-icon" onclick="openModal('potentialrevenue', ${item.id})">✏️</button>
+        <button class="btn-icon" onclick="deleteEntry('potentialrevenue', ${item.id})">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+  const monthlyEquiv = arr.reduce((s,i) => s + (i.freq === 'yearly' ? i.amount/12 : i.amount), 0);
+  document.getElementById('totalPotentialRevenue').textContent = '~' + fmt(monthlyEquiv) + '/mo';
+}
+
+function renderExpenses(total) {
+  const el = document.getElementById('expensesList');
+  if (!data.expenses.length) { el.innerHTML = `<div class="empty-state"><div class="emoji">💸</div><p>Expenses లేవు</p></div>`; return; }
+  const groups = {};
+  data.expenses.forEach(e => { (groups[e.category] = groups[e.category] || []).push(e); });
+  el.innerHTML = Object.entries(groups).map(([cat, items]) => `
+    <div class="expense-category">
+      <div class="expense-cat-header">
+        <div class="expense-cat-name">${cat}</div>
+        <div class="expense-cat-total">${fmt(items.reduce((s,i)=>s+i.amount,0))}</div>
+      </div>
+      <div class="expense-items">
+        ${items.map(item => `
+          <div class="expense-item">
+            <span>${item.name}</span>
+            <span>${fmt(item.amount)}
+              <button class="btn-icon" style="padding:2px 6px" onclick="openModal('expense',${item.id})">✏️</button>
+              <button class="btn-icon" style="padding:2px 6px" onclick="deleteEntry('expense',${item.id})">🗑️</button>
+            </span>
+          </div>`).join('')}
+      </div>
+    </div>
+  `).join('') + `<div style="text-align:right;font-size:13px;font-weight:800;margin-top:8px;color:var(--red)">Grand Total: ${fmt(total)}/నెల (₹${Math.round(total/30).toLocaleString('en-IN')}/రోజు)</div>`;
+}
+
+function renderOverview(tFixed, tWife, tSecure, tPending, tDoubtful, tBizHold, tPayables, tExpenses, tRevenue) {
+  const el = document.getElementById('overviewBreakdown');
+  const items = [
+    { name: '🏡 Personal Fixed Assets', val: tFixed, type: 'asset' },
+    { name: '👰 భార్య ఆస్తులు', val: tWife, type: 'asset' },
+    { name: '✅ Secure Holdings', val: tSecure, type: 'asset' },
+    { name: '⏳ Pending F&F', val: tPending, type: 'asset' },
+    { name: '🏢 Business Holdings', val: tBizHold, type: 'asset' },
+    { name: '⚠️ Doubtful Receivables', val: tDoubtful, type: mode === 'optimistic' ? 'asset' : 'excluded' },
+    { name: '❌ నేను ఇవ్వవలసినవి', val: tPayables, type: 'debt' },
+  ].filter(i => i.val > 0);
+
+  el.innerHTML = items.map(i => `
+    <div class="breakdown-item">
+      <div class="breakdown-dot" style="background:${i.type==='asset'?'#2ecc71':i.type==='debt'?'#ff5c5c':'#5f6788'}"></div>
+      <div class="breakdown-name">${i.name}${i.type==='excluded'?' (excluded)':''}</div>
+      <div class="breakdown-val" style="color:${i.type==='asset'?'#2ecc71':i.type==='debt'?'#ff5c5c':'#5f6788'}">${i.type==='debt'?'-':i.type==='excluded'?'':'+'}${fmt(i.val)}</div>
+    </div>
+  `).join('');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ============ INSIGHTS / ADVICE ENGINE ============
+function renderInsights(d) {
+  const el = document.getElementById('insightsContainer');
+  const expenseRatio = ((d.tExpenses / d.tRevenue) * 100).toFixed(0);
+
+  let html = `
+    <div class="insights-summary">
+      <h4>📌 ప్రస్తుత పరిస్థితి సారాంశం</h4>
+      <p>మీ నెలవారీ రెవెన్యూ <b>${fmt(d.tRevenue)}</b>, ఖర్చులు <b>${fmt(d.tExpenses)}</b> (${expenseRatio}% of revenue).
+      Cash flow: <b style="color:${d.cashflow>=0?'#2ecc71':'#ff5c5c'}">${d.cashflow>=0?'+':''}${fmt(d.cashflow)}/నెల</b>.
+      మీ Net Worth (realistic): <b>${fmt(d.tFixed+d.tWife+d.tSecure+d.tPending+d.tBizHold-d.tPayables)}</b>.</p>
+    </div>
+  `;
+
+  const insights = [];
+
+  // 0. Pending government scheme applications - quick win
+  if ((data.potentialRevenue||[]).length) {
+    const potentialMonthly = (data.potentialRevenue||[]).reduce((s,i)=>s+(i.freq==='yearly'?i.amount/12:i.amount),0);
+    insights.push({
+      priority: 'high', tag: 'వెంటనే Apply చేయండి', icon: '📝',
+      title: `Pension + రైతు భరోసా Apply చేయడం వల్ల నెలకు ~${fmt(potentialMonthly)} అదనంగా`,
+      body: `అమ్మకు పెన్షన్ (<b>₹4,000/నెల</b>) మరియు భార్య పేరు మీద భూమికి రైతు భరోసా (<b>₹13,500/సంవత్సరం</b> ≈ ₹1,125/నెల) — ఈ రెండూ apply చేస్తే నెలవారీ income సుమారు <b>${fmt(potentialMonthly)}</b> పెరుగుతుంది. ఇది మీ cashflow లోటును చాలా వరకు తీర్చేస్తుంది. ఇవి ఒకసారి apply చేస్తే recurring government income — MeeSeva ద్వారా ఈ వారమే apply చేయించండి.`,
+    });
+  }
+
+  // 1. Cash flow deficit - HIGH priority
+  if (d.cashflow < 0) {
+    insights.push({
+      priority: 'high', tag: 'అత్యవసరం', icon: '🚨',
+      title: 'నెలవారీ Cash Flow లోటు ఉంది',
+      body: `మీ revenue (<b>${fmt(d.tRevenue)}</b>) కంటే expenses (<b>${fmt(d.tExpenses)}</b>) ఎక్కువ — నెలకు <b>${fmt(Math.abs(d.cashflow))}</b> లోటు. ఇది ప్రతి నెలా savings నుండి లేదా కొత్త అప్పుల నుండి భర్తీ అవుతుంది. ఇది మొదట సరిచేయాల్సిన విషయం.`,
+    });
+  }
+
+  // 2. Revenue concentration risk
+  insights.push({
+    priority: 'high', tag: 'రెవెన్యూ పెంపు', icon: '📈',
+    title: 'Surya DTH మీద 94% రెవెన్యూ depend అవుతోంది',
+    body: `మీ ₹32,000 revenue లో ₹30,000 (94%) Surya DTH LCO నుండే వస్తోంది. ఇది చాలా risky concentration. మీరు active గా explore చేస్తున్న <b>freelance web/app development</b>, <b>automated recharge pipeline</b>, మరియు <b>social media లీడ్ క్యాప్చర్ సిస్టమ్</b> ఇవి కొత్త revenue streams గా త్వరగా productize చేస్తే, ఒక్క source మీద dependency తగ్గుతుంది.`,
+  });
+
+  // 3. Pending F&F money not collected - quick win
+  const pendingTotal = sum(data.pendingHoldings);
+  if (pendingTotal > 0) {
+    insights.push({
+      priority: 'good', tag: 'త్వరిత డబ్బు', icon: '💰',
+      title: `₹${pendingTotal.toLocaleString('en-IN')} Pending F&F amounts కలెక్ట్ చేయండి`,
+      body: `Sun Direct, DishTV, Tataplay distribution F&F settlements కలిపి <b>${fmt(pendingTotal)}</b> రావాల్సి ఉంది. ఇవి follow-up చేస్తే వెంటనే cash flow లోటు చాలా వరకు తీరిపోతుంది — ఇది మీ ప్రస్తుత నెలవారీ లోటు కంటే ఎక్కువ.`,
+    });
+  }
+
+  // 4. Doubtful receivables - stop the bleeding
+  const doubtfulTotal = sum(data.doubtful);
+  if (doubtfulTotal > 0) {
+    insights.push({
+      priority: 'med', tag: 'రిస్క్ తగ్గించుకోండి', icon: '⚠️',
+      title: `₹${doubtfulTotal.toLocaleString('en-IN')} Doubtful Loans — కొత్తగా ఇవ్వడం ఆపండి`,
+      body: `7 మంది వద్ద <b>${fmt(doubtfulTotal)}</b> blacklist లో ఉంది, వాపసు వచ్చే అవకాశం తక్కువ. ఇకపై వ్యక్తిగత అప్పులు ఇవ్వడం పూర్తిగా ఆపేయండి — ఇది మీ business కోసం కావాల్సిన working capital ను కోల్పోతోంది. ఒకవేళ వీలైతే చిన్న చిన్న installments లో వసూలు చేయడానికి ప్రయత్నించండి.`,
+    });
+  }
+
+  // 5. High interest personal loan
+  insights.push({
+    priority: 'med', tag: 'వడ్డీ ఖర్చు', icon: '💸',
+    title: 'బయట వ్యక్తికి నెలవారీ వడ్డీ ₹4,000 — అతిపెద్ద avoidable expense',
+    body: `నెలవారీ వడ్డీ చెల్లింపు మీ business ఖర్చుల కంటే ఎక్కువగా ఉంది (₹7,900 business expenses లో ఇది లేదు, వేరే). Pending F&F amounts (${fmt(pendingTotal)}) వసూలు అయితే, ఈ అధిక-వడ్డీ అప్పును మొదట తీర్చేయడం మంచిది — అది నెలకు ₹4,000 ఆదా చేస్తుంది.`,
+  });
+
+  // 6. Diversify income via freelance/tech skills
+  insights.push({
+    priority: 'good', tag: 'అవకాశం', icon: '💻',
+    title: 'మీ Tech Skills ను Revenue గా మార్చండి',
+    body: `మీరు ఇప్పటికే MT5 EA trading bots, CRM systems, మరియు client websites (Shivarama Traders, Manjunatha Cell Point) build చేశారు. ఇవి one-time projects గా కాకుండా, చిన్న local వ్యాపారాలకు <b>monthly maintenance/hosting packages</b> (₹500-1500/month per client) గా offer చేస్తే, స్థిరమైన recurring revenue stream వస్తుంది — Surya DTH మీద dependency తగ్గుతుంది.`,
+  });
+
+  // 7. Cashfree automation completion = time savings = capacity for more clients
+  insights.push({
+    priority: 'good', tag: 'Automation', icon: '⚙️',
+    title: 'Recharge Automation పూర్తి చేయడం వల్ల time ఆదా',
+    body: `Cashfree → Webhook → Phoenix portal pipeline పూర్తయితే, మాన్యువల్ recharge పని తగ్గి, ఆ సమయాన్ని కొత్త clients/business expansion కోసం వాడుకోవచ్చు. VPS కి migrate చేయడం (~₹300-500/month) ఇన్వెస్ట్‌మెంట్ చేసే విలువ ఉంది — 24/7 reliability వల్ల ఎక్కువ మంది కస్టమర్లను handle చేయగలరు.`,
+  });
+
+  // 8. Expense optimization
+  insights.push({
+    priority: 'med', tag: 'ఖర్చు తగ్గింపు', icon: '✂️',
+    title: 'Business Room Rent (₹4,400) ఆడిట్ చేయండి',
+    body: `Surya DTH business expenses లో room rent అతిపెద్ద item. ఇంటి నుండి నడిపే option ఉంటే, ఈ ₹4,400/నెల (₹52,800/సంవత్సరం) ఆదా అవుతుంది. ఒకవేళ shop కస్టమర్ల కోసం అవసరమైతే, దాని valueను revenue పెంచుకోవడానికి కూడా (e.g., mobile accessories అమ్మకం) వాడుకోవచ్చు.`,
+  });
+
+  // 9. Asset-rich, cash-flow-poor situation
+  insights.push({
+    priority: 'med', tag: 'ఆస్తుల వినియోగం', icon: '🏡',
+    title: 'మీరు Asset-Rich, Cash-Flow-Poor స్థితిలో ఉన్నారు',
+    body: `మీ total assets చాలా బలంగా ఉన్నాయి (భూమి, బంగారం, house) — కానీ ఇవి liquid కాదు, నెలవారీ ఖర్చులకు ఉపయోగపడవు. చాగలేరు పొలం (1 ఎకరా) లేదా M&M shares వంటి తక్కువ-priority assets ను అవసరమైతే ఆలోచించవచ్చు, కానీ ముందు cash-flow సమస్యను revenue పెంచడం/expense తగ్గించడం ద్వారా పరిష్కరించడమే మంచిది, ఆస్తులు అమ్మే అవసరం వచ్చేలా చేయకుండా.`,
+  });
+
+  // Render
+  el.innerHTML = html + insights.map(i => `
+    <div class="insight-card priority-${i.priority}">
+      <span class="insight-tag ${i.priority === 'high' ? 'high' : i.priority === 'med' ? 'med' : 'good'}">${i.icon} ${i.tag}</span>
+      <div class="insight-title">${i.title}</div>
+      <div class="insight-body">${i.body}</div>
+    </div>
+  `).join('');
+}
+
+loadData();
+render();
+document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('te-IN');
+</script>
+
+</body>
+</html>
